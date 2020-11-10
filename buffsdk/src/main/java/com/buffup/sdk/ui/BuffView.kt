@@ -15,6 +15,7 @@ import com.buffup.sdk.domain.entities.Buff
 import com.buffup.sdk.domain.entities.Question
 import com.buffup.sdk.domain.usecases.CountdownTime
 import com.buffup.sdk.domain.usecases.ObserveBuffs
+import com.buffup.sdk.domain.usecases.VoteBuff
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.buff_question.view.*
 import kotlinx.android.synthetic.main.buff_sender.view.*
@@ -32,7 +33,9 @@ class BuffView(
 
     private val observeBuffs = ObserveBuffs()
     private val countdownTime = CountdownTime()
+    private val voteBuff = VoteBuff()
     private lateinit var adapter: AnswerAdapter
+    private var activeBuffId: Int = -1
 
     init {
         LayoutInflater.from(context).inflate(R.layout.buff_view, this)
@@ -48,11 +51,12 @@ class BuffView(
     }
 
     private fun setupRecyclerView() {
-        adapter = AnswerAdapter()
+        adapter = AnswerAdapter(clickAnswer = { voteBuff(activeBuffId, it) })
         answers.adapter = adapter
     }
 
     private fun setData(buff: Buff) {
+        activeBuffId = buff.id
         setAuthor(buff.author)
         setQuestion(buff.question, buff.timer)
         setAnswers(buff.answers)
