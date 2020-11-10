@@ -1,5 +1,6 @@
-package com.buffup.sdk
+package com.buffup.sdk.domain.usecases
 
+import androidx.test.filters.SmallTest
 import com.buffup.sdk.domain.usecases.CountdownTime
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -8,6 +9,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 
+@SmallTest
 @ExperimentalCoroutinesApi
 class CountdownTimeTest {
 

@@ -1,8 +1,13 @@
 package com.buffup.sdk.domain.usecases
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 class VoteBuff {
 
-    operator fun invoke(buffId: Int, answerId: Int) {
-        // TODO: Handle vote
+    suspend operator fun invoke(buffId: Int, answerId: Int) {
+        withContext(Dispatchers.IO) {
+            // TODO: Handle vote
+        }
     }
 }

@@ -1,8 +1,13 @@
 package com.buffup.sdk.domain.usecases
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 class CloseBuff {
 
-    operator fun invoke(buffId: Int) {
-        // TODO: Handle Buff closing
+    suspend operator fun invoke(buffId: Int) {
+        withContext(Dispatchers.IO) {
+            // TODO: Handle close
+        }
     }
 }

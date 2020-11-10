@@ -29,6 +29,11 @@ class AnswerAdapter(
         holder.bind(answer, isSelected)
     }
 
+    fun clearSelection() {
+        selectedAnswerId = -1
+        notifyItemRangeChanged(0, itemCount)
+    }
+
     companion object {
 
         private val DIFF_UTILS = object : DiffUtil.ItemCallback<Answer>() {
