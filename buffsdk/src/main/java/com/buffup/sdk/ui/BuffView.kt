@@ -13,6 +13,7 @@ import com.buffup.sdk.domain.entities.Answer
 import com.buffup.sdk.domain.entities.Author
 import com.buffup.sdk.domain.entities.Buff
 import com.buffup.sdk.domain.entities.Question
+import com.buffup.sdk.domain.usecases.CloseBuff
 import com.buffup.sdk.domain.usecases.CountdownTime
 import com.buffup.sdk.domain.usecases.ObserveBuffs
 import com.buffup.sdk.domain.usecases.VoteBuff
@@ -34,6 +35,7 @@ class BuffView(
     private val observeBuffs = ObserveBuffs()
     private val countdownTime = CountdownTime()
     private val voteBuff = VoteBuff()
+    private val closeBuff = CloseBuff()
     private lateinit var adapter: AnswerAdapter
     private var activeBuffId: Int = -1
 
@@ -60,6 +62,10 @@ class BuffView(
         setAuthor(buff.author)
         setQuestion(buff.question, buff.timer)
         setAnswers(buff.answers)
+        buff_close.setOnClickListener {
+            toggleBuffVisibility(false)
+            closeBuff(activeBuffId)
+        }
         toggleBuffVisibility(true)
     }
 
