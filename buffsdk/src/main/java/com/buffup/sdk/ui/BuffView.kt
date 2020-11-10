@@ -21,11 +21,8 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.buff_question.view.*
 import kotlinx.android.synthetic.main.buff_sender.view.*
 import kotlinx.android.synthetic.main.buff_view.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 class BuffView(
     context: Context,
@@ -38,6 +35,8 @@ class BuffView(
     private val closeBuff = CloseBuff()
     private lateinit var adapter: AnswerAdapter
     private var activeBuffId: Int = -1
+    private var selectedAnswerId: Int = -1
+    private var timerJob: Job? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.buff_view, this)
@@ -53,7 +52,10 @@ class BuffView(
     }
 
     private fun setupRecyclerView() {
-        adapter = AnswerAdapter(clickAnswer = { voteBuff(activeBuffId, it) })
+        adapter = AnswerAdapter(clickAnswer = {
+            selectedAnswerId = it
+            if (!timerJob?.isCancelled!!) timerJob?.cancel() // TODO: Remove nullable
+        })
         answers.adapter = adapter
     }
 
@@ -86,14 +88,24 @@ class BuffView(
     private fun setQuestion(question: Question, timer: Int) {
         question_text.text = question.title
 
-        GlobalScope.launch(Dispatchers.Main) {
+        timerJob = GlobalScope.launch(Dispatchers.Main) {
             countdownTime(timer).collect {
                 question_time.text = it.toString()
                 question_time_progress.progress = it
-                if (it == 0) {
+            }
+        }
+        timerJob?.invokeOnCompletion {
+            GlobalScope.launch(Dispatchers.Main) {
+                // When job is canceled, meaning user has voted.
+                if (it != null) {
+                    buff_close.isVisible = false
+                    question_time.isVisible = false
+                    question_time_progress.isVisible = false
                     delay(2_000)
-                    toggleBuffVisibility(false)
                 }
+
+                toggleBuffVisibility(false)
+                if (selectedAnswerId != -1) voteBuff(activeBuffId, selectedAnswerId)
             }
         }
     }
